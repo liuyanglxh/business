@@ -22,10 +22,10 @@ public class VideoUtil {
     private static final Logger logger = LoggerFactory.getLogger(VideoUtil.class);
 
     public static void main(String[] args) throws Exception {
-        String filePath = "/Users/liuyang/Downloads/S08E06.End.1080p.HD中英双字[最新电影www.66e.cc].mp4";
+        String filePath = "images/image.avi";
         File video = new File(filePath);
         long l = System.currentTimeMillis();
-        fetchPics(video, 10);
+        grabFrames(video, 10);
         System.out.println("花费时间：" + (System.currentTimeMillis() - l));
     }
 
@@ -35,7 +35,7 @@ public class VideoUtil {
      * @param file   视频文件
      * @param picNum 要抓取的数量
      */
-    public static void fetchPics(File file, int picNum) throws Exception {
+    public static void grabFrames(File file, int picNum) throws Exception {
         FFmpegFrameGrabber videoFile = new FFmpegFrameGrabber(file);
         videoFile.start();
         int length = videoFile.getLengthInFrames();
