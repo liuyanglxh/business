@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "${usercenter.name}", fallbackFactory = UserRpcServiceFallbackFactory.class, configuration = HeaderInterceptor.class)
+//@FeignClient(value = "${usercenter.name}", fallbackFactory = UserRpcServiceFallbackFactory.class, configuration = HeaderInterceptor.class)
+@FeignClient(value = "ucenter", fallbackFactory = UserRpcServiceFallbackFactory.class, configuration = HeaderInterceptor.class)
 @RequestMapping("api/user/v1")
 public interface UserRpcService {
 

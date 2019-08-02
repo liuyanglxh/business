@@ -22,7 +22,7 @@ public class VideoUtil {
     private static final Logger logger = LoggerFactory.getLogger(VideoUtil.class);
 
     public static void main(String[] args) throws Exception {
-        String filePath = "images/image.avi";
+        String filePath = "/Users/liuyang/Downloads/S08E06.End.1080p.HD中英双字[最新电影www.66e.cc].mp4";
         File video = new File(filePath);
         long l = System.currentTimeMillis();
         grabFrames(video, 10);

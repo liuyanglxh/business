@@ -13,6 +13,8 @@ spring:
       uri: http://localhost:8888
   jackson:
     default-property-inclusion: non_null
+  zipkin:
+    base-url: http://localhost:11008
 
 eureka:
   instance:
@@ -31,4 +33,6 @@ hystrix:
           enabled: false
         isolation:
           strategy: SEMAPHORE
+
+
 
