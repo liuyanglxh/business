@@ -1,12 +1,15 @@
 package com.liuyang.jvm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OOM {
 
     public static void main(String[] args) throws InterruptedException {
+        Map<String, String> map = new HashMap<>(10, 0.75f);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         List<Tree> lst1 = new ArrayList<>();
         List<Tree> lst2 = new ArrayList<>();
@@ -33,3 +36,5 @@ public class OOM {
         private Tree tree;
     }
 }
+
+
