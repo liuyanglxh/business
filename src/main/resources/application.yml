@@ -8,9 +8,9 @@ spring:
   profiles:
     active:
       default
-  cloud:
-    config:
-      uri: http://localhost:8888
+#  cloud:
+#    config:
+#      uri: http://localhost:8888
   jackson:
     default-property-inclusion: non_null
   zipkin:
