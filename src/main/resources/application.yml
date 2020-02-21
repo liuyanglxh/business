@@ -13,8 +13,8 @@ spring:
 #      uri: http://localhost:8888
   jackson:
     default-property-inclusion: non_null
-  zipkin:
-    base-url: http://localhost:11008
+#  zipkin:
+#    base-url: http://localhost:11008
 
 eureka:
   instance:
@@ -23,16 +23,12 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://47.105.111.80:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 
 hystrix:
-  command:
+  threadpool:
     default:
-      execution:
-        timeout:
-          enabled: false
-        isolation:
-          strategy: SEMAPHORE
-
+      coreSize: 20
+#      maxQueueSize: 30
 
 
