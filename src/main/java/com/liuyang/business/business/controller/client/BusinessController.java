@@ -5,6 +5,8 @@ import com.liuyang.business.pojo.Result;
 import com.liuyang.business.pojo.vo.UserVo;
 import com.liuyang.business.service.BusinessService;
 import com.liuyang.common.utils.ThreadPools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,10 @@ public class BusinessController extends BaseController {
     private BusinessService businessService;
 
     @GetMapping("user-info")
-    public Result getUserInfo(@RequestParam(value = "userId", required = false) Integer userId) {
-        return Result.success(businessService.getUserInfo(userId));
+    public Result getUserInfo(@RequestParam(value = "userId", required = false) Integer userId,
+                              @RequestParam(value = "throwExc", defaultValue = "false") boolean throwExc) {
+        System.out.println(businessService.getClass().getName());
+        return Result.success(businessService.getUserInfo(userId, throwExc));
     }
 
     @GetMapping("by-user/{userId}")
@@ -34,15 +38,16 @@ public class BusinessController extends BaseController {
 
     @GetMapping("test-feign")
     public Result testFeign(@RequestParam("async") Boolean async,
-                            @RequestParam("size") Integer size) throws InterruptedException, ExecutionException {
+                            @RequestParam("size") Integer size,
+                            @RequestParam(value = "throwExc", defaultValue = "false") boolean throwExc) throws InterruptedException, ExecutionException {
 
         if (async) {
-            UserVo vo = businessService.getUserInfo(1);
+            UserVo vo = businessService.getUserInfo(1, throwExc);
             return Result.success(vo);
         } else {
             List<Future<UserVo>> list = new ArrayList<>();
             for (int i = 0; i < size; i++) {
-                list.add(ThreadPools.submit(() -> businessService.getUserInfo(1)));
+                list.add(ThreadPools.submit(() -> businessService.getUserInfo(1, throwExc)));
             }
             List<UserVo> vos = new ArrayList<>();
             for (Future<UserVo> future : list) {

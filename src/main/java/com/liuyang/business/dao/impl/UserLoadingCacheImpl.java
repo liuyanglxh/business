@@ -30,7 +30,7 @@ public class UserLoadingCacheImpl implements UserLoadingCache {
                 .build(new CacheLoader<Integer, UserVo>() {
                     @Override
                     public UserVo load(Integer userId) {
-                        return Optional.ofNullable(userRpcService.getUserInfo(userId)).map(Result::getData).orElse(null);
+                        return Optional.ofNullable(userRpcService.getUserInfo(userId, false)).map(Result::getData).orElse(null);
                     }
                 });
     }

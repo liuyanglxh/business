@@ -25,10 +25,15 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+#参考地址  https://github.com/Netflix/Hystrix/wiki/Configuration
 hystrix:
   threadpool:
     default:
+#    核心线程池大小
       coreSize: 20
-#      maxQueueSize: 30
+#      最大队列
+      maxQueueSize: 30
+#      等待队列拒绝阈值
+      queueSizeRejectionThreshold: 30
 
 

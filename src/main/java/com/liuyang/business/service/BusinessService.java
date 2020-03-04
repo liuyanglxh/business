@@ -5,6 +5,6 @@ import com.liuyang.business.pojo.vo.UserVo;
 
 public interface BusinessService {
 
-    UserVo getUserInfo(Integer id);
+    UserVo getUserInfo(Integer id, boolean throwExc);
 
 }

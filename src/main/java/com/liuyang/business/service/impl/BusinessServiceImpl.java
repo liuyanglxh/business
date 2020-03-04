@@ -14,8 +14,8 @@ public class BusinessServiceImpl implements BusinessService {
     private UserRpcService userRpcService;
 
     @Override
-    public UserVo getUserInfo(Integer id) {
-        Result<UserVo> result = userRpcService.getUserInfo(id);
+    public UserVo getUserInfo(Integer id, boolean throwExc) {
+        Result<UserVo> result = userRpcService.getUserInfo(id, throwExc);
         return result != null ? result.getData() : null;
     }
 }
