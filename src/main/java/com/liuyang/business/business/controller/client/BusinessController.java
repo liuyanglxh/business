@@ -26,7 +26,6 @@ public class BusinessController extends BaseController {
     @GetMapping("user-info")
     public Result getUserInfo(@RequestParam(value = "userId", required = false) Integer userId,
                               @RequestParam(value = "throwExc", defaultValue = "false") boolean throwExc) {
-        System.out.println(businessService.getClass().getName());
         return Result.success(businessService.getUserInfo(userId, throwExc));
     }
 
