@@ -12,13 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-//@DefaultProperties(
-//         threadPoolProperties = {
-//                @HystrixProperty(name = "coreSize", value = "20"),
-//                @HystrixProperty(name = "maxQueueSize", value = "30"),
-//                @HystrixProperty(name = "queueSizeRejectionThreshold", value = "30")
-//        })
-//@FeignClient(value = "${usercenter.name}", fallbackFactory = UserRpcServiceFallbackFactory.class, configuration = HeaderInterceptor.class)
 @FeignClient(name = "ucenter", fallbackFactory = UserRpcServiceFallbackFactory.class)
 public interface UserRpcService {
 
