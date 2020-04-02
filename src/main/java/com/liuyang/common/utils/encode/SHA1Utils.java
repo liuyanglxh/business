@@ -2,7 +2,7 @@ package com.liuyang.common.utils.encode;
 
 import java.security.MessageDigest;
 
-public class SecuritySHA1Utils {
+public class SHA1Utils {
  
     /**
      * @Comment SHA1实现
