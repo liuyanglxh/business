@@ -35,10 +35,10 @@ public class PipeTest {
         System.out.println(new ObjectMapper().writeValueAsString(vo));
     }
 
-    private PersonVo getVo(Integer id) {
+    private PersonVo getVo(Integer personId) {
 
-        RedisItem<Person> personItem = personService.get(id);
-        RedisItem<Reward> rewardItem = rewardService.getByPerson(id);
+        RedisItem<Person> personItem = personService.get(personId);
+        RedisItem<Reward> rewardItem = rewardService.getByPerson(personId);
 
         agent.addItem(personItem);
         agent.addItem(rewardItem);
