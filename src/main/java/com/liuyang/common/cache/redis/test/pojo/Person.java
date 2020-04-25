@@ -1,4 +1,11 @@
 package com.liuyang.common.cache.redis.test.pojo;
 
-public class Persion {
+import lombok.Data;
+
+@Data
+public class Person {
+
+    private Integer id;
+    private String name;
+
 }

@@ -1,6 +1,7 @@
-package com.liuyang.common.redis;
+package com.liuyang.common.cache.redis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.liuyang.common.cache.redis.lua.LuaScript;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,9 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-/**
- * Created by tangcheng on 2017/12/28.
- */
 public interface RedisHelper {
     int DEFAULT_TIMEOUT = 10 * 60;
 
@@ -66,6 +64,7 @@ public interface RedisHelper {
 
     /**
      * 线上Codis集群不支持KEYS命令（慎用）
+     *
      * @param pattern
      * @return
      */
@@ -90,6 +89,8 @@ public interface RedisHelper {
     <T> Map<String, T> hgetAll(String key, Class<T> clazz);
 
     <T> Map<String, T> hgetAll(String key, TypeReference<T> type);
+
+    Map<String, String> hgetAll(String key);
 
     <T> List<T> lrange(String key, Integer start, Integer end, Class<T> classType);
 
@@ -133,6 +134,12 @@ public interface RedisHelper {
 
     <V> void hmset(String key, Collection<V> data, Function<V, String> fieldSwapper);
 
+    Object eval(LuaScript script, String key, List<Object> args);
+
+    Object eval(LuaScript script, String key);
+
+    Object eval(LuaScript script);
+
     default String generateKey(Object... params) {
         StringBuilder builder = new StringBuilder();
         for (Object param : params) {
@@ -143,7 +150,6 @@ public interface RedisHelper {
         }
         return builder.toString();
     }
-
 
 
 }

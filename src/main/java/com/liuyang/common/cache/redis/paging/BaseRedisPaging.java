@@ -1,8 +1,8 @@
-package com.liuyang.common.redis.paging;
+package com.liuyang.common.cache.redis.paging;
 
 import com.liuyang.common.BusinessException;
 import com.liuyang.common.pojo.PageList;
-import com.liuyang.common.redis.RedisHelper;
+import com.liuyang.common.cache.redis.RedisHelper;
 import com.liuyang.common.utils.ObjectConvertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

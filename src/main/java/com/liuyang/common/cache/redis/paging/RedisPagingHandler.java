@@ -1,4 +1,4 @@
-package com.liuyang.common.redis.paging;
+package com.liuyang.common.cache.redis.paging;
 
 import com.liuyang.common.pojo.PageList;
 import org.springframework.util.CollectionUtils;

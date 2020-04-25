@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+
 public class ObjectConvertUtil {
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -64,4 +66,19 @@ public class ObjectConvertUtil {
         return mapper.convertValue(fromValue, toValueTypeRef);
     }
 
+    public static <T> T readValue(String fromValue, TypeReference<T> toValueTypeRef){
+        try {
+            return mapper.readValue(fromValue, toValueTypeRef);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static <T> T readValue(String fromValue, Class<T> clz){
+        try {
+            return mapper.readValue(fromValue, clz);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }

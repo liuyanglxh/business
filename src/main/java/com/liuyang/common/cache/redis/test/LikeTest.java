@@ -1,5 +1,7 @@
-package com.liuyang.common.cache.redis;
+package com.liuyang.common.cache.redis.test;
 
+import com.liuyang.common.cache.redis.JedisHelper;
+import com.liuyang.common.cache.redis.RedisHelper;
 import com.liuyang.common.cache.redis.lua.LuaScript;
 import org.junit.Test;
 

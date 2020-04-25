@@ -1,6 +1,5 @@
 package com.liuyang.common.cache.agg;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -9,7 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class RedisPipeOperator {
+/**
+ * redis代理人
+ */
+public abstract class RedisPipelineAgent {
 
     private List<RedisItem<?>> items;
 
@@ -29,20 +31,19 @@ public abstract class RedisPipeOperator {
         sync();
 
         Object o = objectMap.get(item);
-        if (o == null) {
-            return null;
-        }
-
-        return new ObjectMapper().convertValue(o, item.getReference());
+        return item.getHandler().apply(o);
     }
 
     private void sync() {
-        if (objectMap == null) {
-            Pipeline p = getJedis().pipelined();
+        if (objectMap != null) {
+            return;
+        }
+        try (Jedis jedis = getJedis()) {
+            Pipeline p = jedis.pipelined();
             objectMap = new HashMap<>();
 
             for (RedisItem<?> item : items) {
-                item.getReader().apply(p);
+                item.getReader().accept(p);
             }
 
             List<Object> objects = p.syncAndReturnAll();
