@@ -28,13 +28,13 @@ public abstract class RedisPipelineAgent {
 
     public <T> T syncAndGet(RedisItem<T> item) {
 
-        sync();
+        trySync();
 
         Object o = objectMap.get(item);
         return item.getHandler().apply(o);
     }
 
-    private void sync() {
+    private void trySync() {
         if (objectMap != null) {
             return;
         }
