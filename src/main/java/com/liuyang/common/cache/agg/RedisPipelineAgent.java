@@ -1,7 +1,6 @@
 package com.liuyang.common.cache.agg;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,45 +14,61 @@ public abstract class RedisPipelineAgent {
 
     private List<RedisItem<?>> items;
 
-    private Map<RedisItem, Object> objectMap;
+    private Map<RedisItem, List<Object>> objectMap;
+
+    private Map<RedisItem, Integer> itemCountMap;
+
+    private boolean synced;
 
     protected abstract Jedis getJedis();
 
-    public void addItem(RedisItem item) {
+    public <T> RedisItem<T> addItem(RedisItem<T> item) {
+        if (synced) {
+            throw new RuntimeException("the agent has already synced,please call the method before sync");
+        }
         if (items == null) {
             items = new ArrayList<>();
         }
         items.add(item);
+        return item;
     }
 
-    public <T> T syncAndGet(RedisItem<T> item) {
+    public <T> T get(RedisItem<T> item) {
 
-        trySync();
+        sync();
 
-        Object o = objectMap.get(item);
-        return item.getHandler().apply(o);
+        List<Object> list = objectMap.get(item);
+        return item.getHandler().apply(list);
     }
 
-    private void trySync() {
-        if (objectMap != null) {
+    private void sync() {
+        if (synced) {
             return;
         }
         try (Jedis jedis = getJedis()) {
-            Pipeline p = jedis.pipelined();
+            PipelineCounter p = new PipelineCounter(jedis.pipelined());
             objectMap = new HashMap<>();
 
             for (RedisItem<?> item : items) {
+                //调用获取redis数据的方法
                 item.getReader().accept(p);
+                itemCountMap.put(item, p.getCount());
+                p.move();
             }
 
             List<Object> objects = p.syncAndReturnAll();
 
-            for (int i = 0; i < items.size(); i++) {
-                RedisItem<?> item = items.get(i);
-                Object obj = objects.get(i);
-                objectMap.put(item, obj);
+            int index = 0;
+            for (RedisItem<?> item : items) {
+                Integer count = itemCountMap.get(item);
+                for (Integer i = 0; i < count; i++) {
+                    objectMap.putIfAbsent(item, new ArrayList<>());
+                    Object obj = objects.get(index++);
+                    objectMap.get(item).add(obj);
+                }
             }
         }
+        synced = true;
     }
 
 }

@@ -9,6 +9,7 @@ import com.liuyang.common.utils.ObjectConvertUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -19,7 +20,7 @@ public class RewardServiceImpl implements RewardService {
         //从缓存取数据的方法
         Consumer<Pipeline> reader = pipeline -> pipeline.get(this.key(personId));
         //拿到数据后解析的方式
-        Function<Object, Reward> handler = obj -> {
+        Function<List<Object>, Reward> handler = obj -> {
             //缓存不命中
             if (obj == null) {
                 Reward r = new Reward();
@@ -34,7 +35,7 @@ public class RewardServiceImpl implements RewardService {
             }
             //缓存命中
             else {
-                return ObjectConvertUtil.readValue((String) obj, new TypeReference<Reward>() {
+                return ObjectConvertUtil.readValue((String) obj.get(0), new TypeReference<Reward>() {
                 });
             }
 

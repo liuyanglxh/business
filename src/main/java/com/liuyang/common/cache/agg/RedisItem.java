@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import redis.clients.jedis.Pipeline;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -21,6 +22,6 @@ public class RedisItem<T> {
     private Consumer<Pipeline> reader;
 
     //处理redis数据的方式
-    private Function<Object, T> handler;
+    private Function<List<Object>, T> handler;
 
 }

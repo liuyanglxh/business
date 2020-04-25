@@ -32,22 +32,19 @@ public class PipeTest {
 
     @Test
     public void pipeTest() throws JsonProcessingException {
-        PersonVo vo = this.getVo(1);
+        PersonVo vo = this.getUserVo(1);
         System.out.println(new ObjectMapper().writeValueAsString(vo));
     }
 
-    private PersonVo getVo(Integer personId) {
+    private PersonVo getUserVo(Integer personId) {
 
         TestAgent agent = new TestAgent();
 
-        RedisItem<Person> personItem = personService.get(personId);
-        RedisItem<Reward> rewardItem = rewardService.getByPerson(personId);
+        RedisItem<Person> personItem = agent.addItem(personService.get(personId));
+        RedisItem<Reward> rewardItem = agent.addItem(rewardService.getByPerson(personId));
 
-        agent.addItem(personItem);
-        agent.addItem(rewardItem);
-
-        Person person = agent.syncAndGet(personItem);
-        Reward reward = agent.syncAndGet(rewardItem);
+        Person person = agent.get(personItem);
+        Reward reward = agent.get(rewardItem);
 
         PersonVo vo = new PersonVo();
         vo.setId(person.getId());

@@ -24,7 +24,7 @@ public class PersonServiceImpl implements PersonService {
         Consumer<Pipeline> reader = pipeline -> pipeline.get(this.key(id));
 
         //拿到数据后解析的方式
-        Function<Object, Person> handler = obj -> {
+        Function<List<Object>, Person> handler = obj -> {
             //缓存不命中
             if (obj == null) {
                 Person r = new Person();
@@ -38,7 +38,7 @@ public class PersonServiceImpl implements PersonService {
             }
             //缓存命中
             else {
-                return ObjectConvertUtil.readValue((String) obj, Person.class);
+                return ObjectConvertUtil.readValue((String) obj.get(0), Person.class);
             }
 
         };
