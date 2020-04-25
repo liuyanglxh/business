@@ -22,6 +22,14 @@ public class PipeTest {
     private PersonService personService = new PersonServiceImpl();
     private RewardService rewardService = new RewardServiceImpl();
 
+    static class TestAgent extends RedisPipelineAgent {
+
+        @Override
+        protected Jedis getJedis() {
+            return jedisPool.getResource();
+        }
+    }
+
     @Test
     public void pipeTest() throws JsonProcessingException {
         PersonVo vo = this.getVo(1);
@@ -30,12 +38,7 @@ public class PipeTest {
 
     private PersonVo getVo(Integer personId) {
 
-        RedisPipelineAgent agent = new RedisPipelineAgent() {
-            @Override
-            protected Jedis getJedis() {
-                return jedisPool.getResource();
-            }
-        };
+        TestAgent agent = new TestAgent();
 
         RedisItem<Person> personItem = personService.get(personId);
         RedisItem<Reward> rewardItem = rewardService.getByPerson(personId);
