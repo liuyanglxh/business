@@ -19,13 +19,6 @@ public class PipeTest {
 
     public static JedisPool jedisPool = new JedisPool("localhost", 6379);
 
-    private RedisPipelineAgent agent = new RedisPipelineAgent() {
-        @Override
-        protected Jedis getJedis() {
-            return jedisPool.getResource();
-        }
-    };
-
     private PersonService personService = new PersonServiceImpl();
     private RewardService rewardService = new RewardServiceImpl();
 
@@ -36,6 +29,13 @@ public class PipeTest {
     }
 
     private PersonVo getVo(Integer personId) {
+
+        RedisPipelineAgent agent = new RedisPipelineAgent() {
+            @Override
+            protected Jedis getJedis() {
+                return jedisPool.getResource();
+            }
+        };
 
         RedisItem<Person> personItem = personService.get(personId);
         RedisItem<Reward> rewardItem = rewardService.getByPerson(personId);
