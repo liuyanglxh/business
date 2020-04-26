@@ -33,10 +33,12 @@ public class PersonServiceImpl implements PersonService {
             Person p;
             //缓存不命中
             if (obj0 == null) {
+
+                //查数据库 + 写缓存
                 p = new Person();
                 p.setId(id);
                 p.setName(id + "的名字");
-                //写缓存
+
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
                     jedis.set(this.key(id), ObjectConvertUtil.writeAsString(p));
                 }
@@ -50,11 +52,14 @@ public class PersonServiceImpl implements PersonService {
             Object obj1 = objects.get(1);
             Boolean ok;
             if (obj1 == null) {
+
+                // 查数据库 + 写缓存
                 ok = Boolean.TRUE;
                 //写缓存
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
                     jedis.set(this.legalKey(id), ok.toString());
                 }
+
             } else {
                 ok = Boolean.valueOf(obj1.toString());
             }
