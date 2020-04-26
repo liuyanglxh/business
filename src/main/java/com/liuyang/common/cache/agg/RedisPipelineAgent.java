@@ -37,6 +37,10 @@ public abstract class RedisPipelineAgent {
 
     public <T> T getObject(RedisItem<T> item) {
 
+        if (item == null) {
+            return null;
+        }
+
         sync();
 
         List<Object> list = objectMap.get(item);
