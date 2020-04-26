@@ -1,6 +1,7 @@
 package com.liuyang.common.cache.agg;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,13 +17,14 @@ public abstract class RedisPipelineAgent {
 
     private Map<RedisItem, List<Object>> objectMap;
 
-    private Map<RedisItem, Integer> itemCountMap;
-
     private boolean synced;
 
     protected abstract Jedis getJedis();
 
     public <T> RedisItem<T> addItem(RedisItem<T> item) {
+        if (item == null) {
+            return null;
+        }
         if (synced) {
             throw new RuntimeException("the agent has already synced,please call the method before sync");
         }
@@ -33,7 +35,7 @@ public abstract class RedisPipelineAgent {
         return item;
     }
 
-    public <T> T get(RedisItem<T> item) {
+    public <T> T getObject(RedisItem<T> item) {
 
         sync();
 
@@ -46,17 +48,20 @@ public abstract class RedisPipelineAgent {
             return;
         }
         try (Jedis jedis = getJedis()) {
-            PipelineCounter p = new PipelineCounter(jedis.pipelined());
+            Pipeline pipeline = jedis.pipelined();
+            PipelineProxy counter = new PipelineProxy(pipeline);
+
             objectMap = new HashMap<>();
+            Map<RedisItem, Integer> itemCountMap = new HashMap<>();
 
             for (RedisItem<?> item : items) {
                 //调用获取redis数据的方法
-                item.getReader().accept(p);
-                itemCountMap.put(item, p.getCount());
-                p.move();
+                item.getReader().accept(counter);
+                itemCountMap.put(item, counter.count());
+                counter.move();
             }
 
-            List<Object> objects = p.syncAndReturnAll();
+            List<Object> objects = pipeline.syncAndReturnAll();
 
             int index = 0;
             for (RedisItem<?> item : items) {

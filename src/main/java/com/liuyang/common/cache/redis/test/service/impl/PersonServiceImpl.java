@@ -7,6 +7,7 @@ import com.liuyang.common.cache.redis.test.service.PersonService;
 import com.liuyang.common.utils.ObjectConvertUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.commands.RedisPipeline;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,31 +17,49 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PersonServiceImpl implements PersonService {
-
+    
     @Override
     public RedisItem<Person> get(Integer id) {
 
         //从缓存取数据的方法
-        Consumer<Pipeline> reader = pipeline -> pipeline.get(this.key(id));
+        Consumer<RedisPipeline> reader = pipeline -> {
+            pipeline.get(this.key(id));
+            pipeline.get(this.cityKey(id));
+        };
 
         //拿到数据后解析的方式
-        Function<List<Object>, Person> handler = obj -> {
+        Function<List<Object>, Person> handler = objects -> {
+            Object obj0 = objects.get(0);
+            Person p;
             //缓存不命中
-            if (obj == null) {
-                Person r = new Person();
-                r.setId(id);
-                r.setName(id + "的名字");
+            if (obj0 == null) {
+                p = new Person();
+                p.setId(id);
+                p.setName(id + "的名字");
                 //写缓存
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
-                    jedis.set(this.key(id), ObjectConvertUtil.writeAsString(r));
+                    jedis.set(this.key(id), ObjectConvertUtil.writeAsString(p));
                 }
-                return r;
+
             }
             //缓存命中
             else {
-                return ObjectConvertUtil.readValue((String) obj.get(0), Person.class);
+                p = ObjectConvertUtil.readValue((String) obj0, Person.class);
             }
 
+            Object obj1 = objects.get(1);
+            String cityName;
+            if (obj1 == null) {
+                cityName = "person-" + id + "-cityName";
+                //写缓存
+                try (Jedis jedis = PipeTest.jedisPool.getResource()) {
+                    jedis.set(this.cityKey(id), cityName);
+                }
+            } else {
+                cityName = (String) obj1;
+            }
+            p.setCityName(cityName);
+            return p;
         };
 
         return new RedisItem<>(reader, handler);
@@ -78,4 +97,9 @@ public class PersonServiceImpl implements PersonService {
     private String key(Integer id) {
         return "person-" + id;
     }
+
+    private String cityKey(Integer id) {
+        return "person-city-" + id;
+    }
+
 }

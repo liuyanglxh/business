@@ -8,6 +8,7 @@ import com.liuyang.common.cache.redis.test.service.RewardService;
 import com.liuyang.common.utils.ObjectConvertUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.commands.RedisPipeline;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,9 +19,10 @@ public class RewardServiceImpl implements RewardService {
     @Override
     public RedisItem<Reward> getByPerson(Integer personId) {
         //从缓存取数据的方法
-        Consumer<Pipeline> reader = pipeline -> pipeline.get(this.key(personId));
+        Consumer<RedisPipeline> reader = pipeline -> pipeline.get(this.key(personId));
         //拿到数据后解析的方式
-        Function<List<Object>, Reward> handler = obj -> {
+        Function<List<Object>, Reward> handler = objects -> {
+            Object obj = objects.get(0);
             //缓存不命中
             if (obj == null) {
                 Reward r = new Reward();
@@ -35,7 +37,7 @@ public class RewardServiceImpl implements RewardService {
             }
             //缓存命中
             else {
-                return ObjectConvertUtil.readValue((String) obj.get(0), new TypeReference<Reward>() {
+                return ObjectConvertUtil.readValue((String) obj, new TypeReference<Reward>() {
                 });
             }
 
