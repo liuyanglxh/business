@@ -17,14 +17,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PersonServiceImpl implements PersonService {
-    
+
     @Override
     public RedisItem<Person> get(Integer id) {
 
         //从缓存取数据的方法
         Consumer<RedisPipeline> reader = pipeline -> {
             pipeline.get(this.key(id));
-            pipeline.get(this.cityKey(id));
+            pipeline.get(this.legalKey(id));
         };
 
         //拿到数据后解析的方式
@@ -48,18 +48,20 @@ public class PersonServiceImpl implements PersonService {
             }
 
             Object obj1 = objects.get(1);
-            String cityName;
+            Boolean ok;
             if (obj1 == null) {
-                cityName = "person-" + id + "-cityName";
+                ok = Boolean.TRUE;
                 //写缓存
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
-                    jedis.set(this.cityKey(id), cityName);
+                    jedis.set(this.legalKey(id), ok.toString());
                 }
             } else {
-                cityName = (String) obj1;
+                ok = Boolean.valueOf(obj1.toString());
             }
-            p.setCityName(cityName);
-            return p;
+            if (ok) {
+                return p;
+            }
+            return null;
         };
 
         return new RedisItem<>(reader, handler);
@@ -98,8 +100,8 @@ public class PersonServiceImpl implements PersonService {
         return "person-" + id;
     }
 
-    private String cityKey(Integer id) {
-        return "person-city-" + id;
+    private String legalKey(Integer id) {
+        return "person-legal-" + id;
     }
 
 }
