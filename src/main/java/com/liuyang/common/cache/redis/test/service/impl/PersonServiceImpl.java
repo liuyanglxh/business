@@ -58,10 +58,7 @@ public class PersonServiceImpl implements PersonService {
             } else {
                 ok = Boolean.valueOf(obj1.toString());
             }
-            if (ok) {
-                return p;
-            }
-            return null;
+            return ok ? p : null;
         };
 
         return new RedisItem<>(reader, handler);
