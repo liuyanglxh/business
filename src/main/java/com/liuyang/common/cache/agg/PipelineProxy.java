@@ -16,8 +16,6 @@ public class PipelineProxy implements RedisPipeline {
 
     private Pipeline pipeline;
 
-    private RedisPipeline redisPipeline;
-
     private List<Integer> counts;
 
     private int index;
