@@ -17,13 +17,18 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     public RedisTask<Reward> getByPerson(Integer personId) {
+
         //从缓存取数据的方法
         Consumer<RedisPipeline> reader = pipeline -> pipeline.get(this.key(personId));
+
         //拿到数据后解析的方式
         Function<List<Object>, Reward> handler = objects -> {
+
             Object obj = objects.get(0);
             //缓存不命中
             if (obj == null) {
+
+                //模拟从数据库查数据
                 Reward r = new Reward();
                 r.setId(personId + 100);
                 r.setPersonId(personId);
@@ -32,6 +37,7 @@ public class RewardServiceImpl implements RewardService {
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
                     jedis.set(this.key(personId), ObjectConvertUtil.writeAsString(r));
                 }
+
                 return r;
             }
             //缓存命中
