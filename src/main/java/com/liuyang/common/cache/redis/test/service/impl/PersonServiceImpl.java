@@ -21,10 +21,12 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public RedisTask<Person> get(Integer id) {
 
+        String legalStatus = "legalStatus";
+
         //从缓存取数据的方法
         Consumer<RedisPipeline> reader = pipeline -> {
             pipeline.get(this.key(id));
-            pipeline.get(this.legalKey(id));
+            pipeline.hget(this.legalKey(id), legalStatus);
         };
 
         //拿到数据后解析的方式
@@ -57,7 +59,7 @@ public class PersonServiceImpl implements PersonService {
                 ok = Boolean.TRUE;
                 //写缓存
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
-                    jedis.set(this.legalKey(id), ok.toString());
+                    jedis.hset(this.legalKey(id), legalStatus, ok.toString());
                 }
 
             } else {
