@@ -21,18 +21,17 @@ public abstract class RedisPipelineErrand {
 
     protected abstract Jedis getJedis();
 
-    public <T> RedisTask<T> recieve(RedisTask<T> task) {
-        if (task == null) {
-            return null;
-        }
+    public <T> void recieve(RedisTask<T> task) {
         if (synced) {
             throw new UnsupportedOperationException("the agent has already synced,please call the method before sync");
+        }
+        if (task == null) {
+            return;
         }
         if (tasks == null) {
             tasks = new ArrayList<>();
         }
         tasks.add(task);
-        return task;
     }
 
     public <T> T getObject(RedisTask<T> task) {
