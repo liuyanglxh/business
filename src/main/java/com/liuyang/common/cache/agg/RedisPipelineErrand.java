@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public abstract class RedisPipelineErrand {
 
-    private List<RedisTask<?>> items;
+    private List<RedisTask<?>> tasks;
 
     private Map<RedisTask, List<Object>> objectMap;
 
@@ -21,30 +21,30 @@ public abstract class RedisPipelineErrand {
 
     protected abstract Jedis getJedis();
 
-    public <T> RedisTask<T> recieve(RedisTask<T> item) {
-        if (item == null) {
+    public <T> RedisTask<T> recieve(RedisTask<T> task) {
+        if (task == null) {
             return null;
         }
         if (synced) {
             throw new UnsupportedOperationException("the agent has already synced,please call the method before sync");
         }
-        if (items == null) {
-            items = new ArrayList<>();
+        if (tasks == null) {
+            tasks = new ArrayList<>();
         }
-        items.add(item);
-        return item;
+        tasks.add(task);
+        return task;
     }
 
-    public <T> T getObject(RedisTask<T> item) {
+    public <T> T getObject(RedisTask<T> task) {
 
-        if (item == null) {
+        if (task == null) {
             return null;
         }
 
         sync();
 
-        List<Object> list = objectMap.get(item);
-        return item.getHandler().apply(list);
+        List<Object> list = objectMap.get(task);
+        return task.getHandler().apply(list);
     }
 
     private void sync() {
@@ -56,24 +56,24 @@ public abstract class RedisPipelineErrand {
             PipelineProxy pipelineProxy = new PipelineProxy(pipeline);
 
             objectMap = new HashMap<>();
-            Map<RedisTask, Integer> itemCountMap = new HashMap<>();
+            Map<RedisTask, Integer> taskCountMap = new HashMap<>();
 
-            for (RedisTask<?> item : items) {
+            for (RedisTask<?> task : tasks) {
                 //调用获取redis数据的方法
-                item.getReader().accept(pipelineProxy);
-                itemCountMap.put(item, pipelineProxy.count());
+                task.getReader().accept(pipelineProxy);
+                taskCountMap.put(task, pipelineProxy.count());
                 pipelineProxy.move();
             }
 
             List<Object> objects = pipeline.syncAndReturnAll();
 
             int index = 0;
-            for (RedisTask<?> item : items) {
-                Integer count = itemCountMap.get(item);
+            for (RedisTask<?> task : tasks) {
+                Integer count = taskCountMap.get(task);
                 for (Integer i = 0; i < count; i++) {
-                    objectMap.putIfAbsent(item, new ArrayList<>());
+                    objectMap.putIfAbsent(task, new ArrayList<>());
                     Object obj = objects.get(index++);
-                    objectMap.get(item).add(obj);
+                    objectMap.get(task).add(obj);
                 }
             }
         }
