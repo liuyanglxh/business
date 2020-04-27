@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class PipelineProxy implements RedisPipeline {
 
-    private Pipeline pipeline;
+    private RedisPipeline pipeline;
 
     private List<Integer> counts;
 
