@@ -26,7 +26,7 @@ public abstract class RedisPipelineErrand {
             return null;
         }
         if (synced) {
-            throw new RuntimeException("the agent has already synced,please call the method before sync");
+            throw new UnsupportedOperationException("the agent has already synced,please call the method before sync");
         }
         if (items == null) {
             items = new ArrayList<>();
