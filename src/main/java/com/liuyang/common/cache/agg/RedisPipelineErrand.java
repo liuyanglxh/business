@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * redis代理人
+ * redis跑腿人
  */
 public abstract class RedisPipelineErrand {
 

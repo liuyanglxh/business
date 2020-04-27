@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * redis操作单位
+ * redis任务
  *
  * @param <T> 业务线最终返回的数据类型
  */
