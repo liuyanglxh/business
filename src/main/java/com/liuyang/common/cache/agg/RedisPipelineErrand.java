@@ -11,17 +11,17 @@ import java.util.Map;
 /**
  * redis代理人
  */
-public abstract class RedisPipelineAgent {
+public abstract class RedisPipelineErrand {
 
-    private List<RedisItem<?>> items;
+    private List<RedisTask<?>> items;
 
-    private Map<RedisItem, List<Object>> objectMap;
+    private Map<RedisTask, List<Object>> objectMap;
 
     private boolean synced;
 
     protected abstract Jedis getJedis();
 
-    public <T> RedisItem<T> addItem(RedisItem<T> item) {
+    public <T> RedisTask<T> recieve(RedisTask<T> item) {
         if (item == null) {
             return null;
         }
@@ -35,7 +35,7 @@ public abstract class RedisPipelineAgent {
         return item;
     }
 
-    public <T> T getObject(RedisItem<T> item) {
+    public <T> T getObject(RedisTask<T> item) {
 
         if (item == null) {
             return null;
@@ -56,9 +56,9 @@ public abstract class RedisPipelineAgent {
             PipelineProxy counter = new PipelineProxy(pipeline);
 
             objectMap = new HashMap<>();
-            Map<RedisItem, Integer> itemCountMap = new HashMap<>();
+            Map<RedisTask, Integer> itemCountMap = new HashMap<>();
 
-            for (RedisItem<?> item : items) {
+            for (RedisTask<?> item : items) {
                 //调用获取redis数据的方法
                 item.getReader().accept(counter);
                 itemCountMap.put(item, counter.count());
@@ -68,7 +68,7 @@ public abstract class RedisPipelineAgent {
             List<Object> objects = pipeline.syncAndReturnAll();
 
             int index = 0;
-            for (RedisItem<?> item : items) {
+            for (RedisTask<?> item : items) {
                 Integer count = itemCountMap.get(item);
                 for (Integer i = 0; i < count; i++) {
                     objectMap.putIfAbsent(item, new ArrayList<>());

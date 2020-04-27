@@ -1,13 +1,12 @@
 package com.liuyang.common.cache.redis.test.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.liuyang.common.cache.agg.RedisItem;
+import com.liuyang.common.cache.agg.RedisTask;
 import com.liuyang.common.cache.redis.test.PipeTest;
 import com.liuyang.common.cache.redis.test.pojo.Reward;
 import com.liuyang.common.cache.redis.test.service.RewardService;
 import com.liuyang.common.utils.ObjectConvertUtil;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.commands.RedisPipeline;
 
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.function.Function;
 public class RewardServiceImpl implements RewardService {
 
     @Override
-    public RedisItem<Reward> getByPerson(Integer personId) {
+    public RedisTask<Reward> getByPerson(Integer personId) {
         //从缓存取数据的方法
         Consumer<RedisPipeline> reader = pipeline -> pipeline.get(this.key(personId));
         //拿到数据后解析的方式
@@ -43,7 +42,7 @@ public class RewardServiceImpl implements RewardService {
 
         };
 
-        return new RedisItem<>(reader, handler);
+        return new RedisTask<>(reader, handler);
     }
 
     private String key(Integer id) {

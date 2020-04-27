@@ -1,6 +1,5 @@
 package com.liuyang.common.cache.agg;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import redis.clients.jedis.commands.RedisPipeline;
 
@@ -14,7 +13,7 @@ import java.util.function.Function;
  * @param <T> 业务线最终返回的数据类型
  */
 @Getter
-public class RedisItem<T> {
+public class RedisTask<T> {
 
     //读取redis的方式
     private Consumer<RedisPipeline> reader;
@@ -22,7 +21,7 @@ public class RedisItem<T> {
     //处理redis数据的方式
     private Function<List<Object>, T> handler;
 
-    public RedisItem(Consumer<RedisPipeline> reader, Function<List<Object>, T> handler) {
+    public RedisTask(Consumer<RedisPipeline> reader, Function<List<Object>, T> handler) {
         this.reader = reader;
         this.handler = handler;
     }

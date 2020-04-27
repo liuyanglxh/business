@@ -1,6 +1,6 @@
 package com.liuyang.common.cache.redis.test.service.impl;
 
-import com.liuyang.common.cache.agg.RedisItem;
+import com.liuyang.common.cache.agg.RedisTask;
 import com.liuyang.common.cache.redis.test.PipeTest;
 import com.liuyang.common.cache.redis.test.pojo.Person;
 import com.liuyang.common.cache.redis.test.service.PersonService;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class PersonServiceImpl implements PersonService {
 
     @Override
-    public RedisItem<Person> get(Integer id) {
+    public RedisTask<Person> get(Integer id) {
 
         //从缓存取数据的方法
         Consumer<RedisPipeline> reader = pipeline -> {
@@ -66,11 +66,11 @@ public class PersonServiceImpl implements PersonService {
             return ok ? p : null;
         };
 
-        return new RedisItem<>(reader, handler);
+        return new RedisTask<>(reader, handler);
     }
 
     @Override
-    public RedisItem<Map<Integer, Person>> getAll(Collection<Integer> ids) {
+    public RedisTask<Map<Integer, Person>> getAll(Collection<Integer> ids) {
 
         List<String> keys = ids.stream().map(this::key).collect(Collectors.toList());
 

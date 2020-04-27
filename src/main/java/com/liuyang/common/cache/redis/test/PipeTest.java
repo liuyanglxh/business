@@ -2,8 +2,8 @@ package com.liuyang.common.cache.redis.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.liuyang.common.cache.agg.RedisItem;
-import com.liuyang.common.cache.agg.RedisPipelineAgent;
+import com.liuyang.common.cache.agg.RedisTask;
+import com.liuyang.common.cache.agg.RedisPipelineErrand;
 import com.liuyang.common.cache.redis.test.pojo.Person;
 import com.liuyang.common.cache.redis.test.pojo.PersonVo;
 import com.liuyang.common.cache.redis.test.pojo.Reward;
@@ -22,7 +22,7 @@ public class PipeTest {
     private PersonService personService = new PersonServiceImpl();
     private RewardService rewardService = new RewardServiceImpl();
 
-    static class TestAgent extends RedisPipelineAgent {
+    static class TestErrand extends RedisPipelineErrand {
 
         @Override
         protected Jedis getJedis() {
@@ -40,15 +40,15 @@ public class PipeTest {
 
     private PersonVo getUserVo(Integer personId) {
 
-        TestAgent agent = new TestAgent();
+        TestErrand errand = new TestErrand();
 
-        RedisItem<Person> personItem = personService.get(personId);
-        agent.addItem(personItem);
-        RedisItem<Reward> rewardItem = rewardService.getByPerson(personId);
-        agent.addItem(rewardItem);
+        RedisTask<Person> personTask = personService.get(personId);
+        errand.recieve(personTask);
+        RedisTask<Reward> rewardTask = rewardService.getByPerson(personId);
+        errand.recieve(rewardTask);
 
-        Person person = agent.getObject(personItem);
-        Reward reward = agent.getObject(rewardItem);
+        Person person = errand.getObject(personTask);
+        Reward reward = errand.getObject(rewardTask);
 
         PersonVo vo = PersonVo.of(person);
 
