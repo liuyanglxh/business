@@ -53,16 +53,16 @@ public abstract class RedisPipelineErrand {
         }
         try (Jedis jedis = getJedis()) {
             Pipeline pipeline = jedis.pipelined();
-            PipelineProxy counter = new PipelineProxy(pipeline);
+            PipelineProxy pipelineProxy = new PipelineProxy(pipeline);
 
             objectMap = new HashMap<>();
             Map<RedisTask, Integer> itemCountMap = new HashMap<>();
 
             for (RedisTask<?> item : items) {
                 //调用获取redis数据的方法
-                item.getReader().accept(counter);
-                itemCountMap.put(item, counter.count());
-                counter.move();
+                item.getReader().accept(pipelineProxy);
+                itemCountMap.put(item, pipelineProxy.count());
+                pipelineProxy.move();
             }
 
             List<Object> objects = pipeline.syncAndReturnAll();
