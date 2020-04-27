@@ -43,9 +43,9 @@ public class PipeTest {
         TestErrand errand = new TestErrand();
 
         RedisTask<Person> personTask = personService.get(personId);
-        errand.recieve(personTask);
+        errand.receive(personTask);
         RedisTask<Reward> rewardTask = rewardService.getByPerson(personId);
-        errand.recieve(rewardTask);
+        errand.receive(rewardTask);
 
         Person person = errand.getObject(personTask);
         Reward reward = errand.getObject(rewardTask);

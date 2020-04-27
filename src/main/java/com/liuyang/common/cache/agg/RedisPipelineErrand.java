@@ -21,7 +21,7 @@ public abstract class RedisPipelineErrand {
 
     protected abstract Jedis getJedis();
 
-    public <T> void recieve(RedisTask<T> task) {
+    public <T> void receive(RedisTask<T> task) {
         if (synced) {
             throw new UnsupportedOperationException("the agent has already synced,please call the method before sync");
         }
