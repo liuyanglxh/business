@@ -32,8 +32,10 @@ public class PipeTest {
 
     @Test
     public void pipeTest() throws JsonProcessingException {
+
         PersonVo vo = this.getUserVo(1);
         System.out.println(new ObjectMapper().writeValueAsString(vo));
+
         PersonVo vo2 = this.getUserVo(2);
         System.out.println(new ObjectMapper().writeValueAsString(vo2));
     }

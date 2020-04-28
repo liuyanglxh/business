@@ -39,7 +39,7 @@ public class PersonServiceImpl implements PersonService {
                 //查数据库 + 写缓存
                 p = new Person();
                 p.setId(id);
-                p.setName(id + "的名字");
+                p.setName("小明");
 
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
                     jedis.set(this.key(id), ObjectConvertUtil.writeAsString(p));

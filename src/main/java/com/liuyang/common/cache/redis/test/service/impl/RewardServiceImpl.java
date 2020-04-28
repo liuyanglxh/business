@@ -32,7 +32,7 @@ public class RewardServiceImpl implements RewardService {
                 Reward r = new Reward();
                 r.setId(personId + 100);
                 r.setPersonId(personId);
-                r.setName(personId + "的奖励");
+                r.setName("的诺贝尔和平奖");
                 //写缓存
                 try (Jedis jedis = PipeTest.jedisPool.getResource()) {
                     jedis.set(this.key(personId), ObjectConvertUtil.writeAsString(r));
