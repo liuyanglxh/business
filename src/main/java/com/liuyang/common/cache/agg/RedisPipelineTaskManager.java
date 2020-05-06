@@ -3,35 +3,26 @@ package com.liuyang.common.cache.agg;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
- * redis跑腿人
+ * redis任务管理者
  */
-public abstract class RedisPipelineErrand {
+public class RedisPipelineTaskManager {
 
     private List<RedisTask<?>> tasks;
+
+    private Supplier<Jedis> jedisSupplier;
 
     private Map<RedisTask, List<Object>> objectMap;
 
     private boolean synced;
 
-    protected abstract Jedis getJedis();
-
-    public <T> void receive(RedisTask<T> task) {
-        if (synced) {
-            throw new UnsupportedOperationException("the agent has already synced,please call the method before sync");
-        }
-        if (task == null) {
-            return;
-        }
-        if (tasks == null) {
-            tasks = new ArrayList<>();
-        }
-        tasks.add(task);
+    public RedisPipelineTaskManager(List<RedisTask<?>> tasks, Supplier<Jedis> jedisSupplier) {
+        this.tasks = tasks.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        this.jedisSupplier = jedisSupplier;
     }
 
     public <T> T getObject(RedisTask<T> task) {
@@ -50,7 +41,7 @@ public abstract class RedisPipelineErrand {
         if (synced) {
             return;
         }
-        try (Jedis jedis = getJedis()) {
+        try (Jedis jedis = jedisSupplier.get()) {
             Pipeline pipeline = jedis.pipelined();
             PipelineProxy pipelineProxy = new PipelineProxy(pipeline);
 

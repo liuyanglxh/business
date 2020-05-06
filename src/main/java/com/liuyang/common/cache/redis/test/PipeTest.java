@@ -2,8 +2,9 @@ package com.liuyang.common.cache.redis.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.liuyang.common.cache.agg.RedisPipelineTaskManager;
+import com.liuyang.common.cache.agg.RedisPipelineTaskManagerFactory;
 import com.liuyang.common.cache.agg.RedisTask;
-import com.liuyang.common.cache.agg.RedisPipelineErrand;
 import com.liuyang.common.cache.redis.test.pojo.Person;
 import com.liuyang.common.cache.redis.test.pojo.PersonVo;
 import com.liuyang.common.cache.redis.test.pojo.Reward;
@@ -22,7 +23,7 @@ public class PipeTest {
     private PersonService personService = new PersonServiceImpl();
     private RewardService rewardService = new RewardServiceImpl();
 
-    static class TestErrand extends RedisPipelineErrand {
+    static class TestFactory extends RedisPipelineTaskManagerFactory {
 
         @Override
         protected Jedis getJedis() {
@@ -42,15 +43,15 @@ public class PipeTest {
 
     private PersonVo getUserVo(Integer personId) {
 
-        TestErrand errand = new TestErrand();
+        TestFactory factory = new TestFactory();
 
         RedisTask<Person> personTask = personService.get(personId);
-        errand.receive(personTask);
         RedisTask<Reward> rewardTask = rewardService.getByPerson(personId);
-        errand.receive(rewardTask);
 
-        Person person = errand.getObject(personTask);
-        Reward reward = errand.getObject(rewardTask);
+        RedisPipelineTaskManager manager = factory.getManager(personTask, rewardTask);
+
+        Person person = manager.getObject(personTask);
+        Reward reward = manager.getObject(rewardTask);
 
         PersonVo vo = PersonVo.of(person);
 
