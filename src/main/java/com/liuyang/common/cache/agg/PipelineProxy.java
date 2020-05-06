@@ -44,8 +44,9 @@ public class PipelineProxy implements RedisPipeline {
 
     @Override
     public Response<Long> append(String key, String value) {
-        add();
-        return pipeline.append(key, value);
+//        add();
+//        return pipeline.append(key, value);
+        throw new UnsupportedOperationException("write operation is not allowed here");
     }
 
     @Override
@@ -62,20 +63,17 @@ public class PipelineProxy implements RedisPipeline {
 
     @Override
     public Response<Long> decr(String key) {
-        add();
-        return pipeline.decr(key);
+        throw new UnsupportedOperationException("write operation is not allowed here");
     }
 
     @Override
     public Response<Long> decrBy(String key, long decrement) {
-        add();
-        return pipeline.decrBy(key, decrement);
+        throw new UnsupportedOperationException("write operation is not allowed here");
     }
 
     @Override
     public Response<Long> del(String key) {
-        add();
-        return pipeline.del(key);
+        throw new UnsupportedOperationException("write operation is not allowed here");
     }
 
     @Override
@@ -98,8 +96,7 @@ public class PipelineProxy implements RedisPipeline {
 
     @Override
     public Response<Long> expire(String key, int seconds) {
-        add();
-        return pipeline.expire(key, seconds);
+        throw new UnsupportedOperationException("write operation is not allowed here");
     }
 
     @Override
