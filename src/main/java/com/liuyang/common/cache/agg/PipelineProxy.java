@@ -16,36 +16,29 @@ public class PipelineProxy implements RedisPipeline {
 
     private RedisPipeline pipeline;
 
-    private List<Integer> counts;
+    private int[] counts;
 
     private int index;
 
-    public void move() {
+    void move() {
         index++;
     }
 
-    public int count() {
-        return counts.get(index);
+    int count() {
+        return counts[index];
     }
 
-    public void add() {
-        if (index >= counts.size()) {
-            counts.add(1);
-        } else {
-
-            counts.set(index, counts.get(index) + 1);
-        }
+    private void add() {
+        counts[index]++;
     }
 
-    public PipelineProxy(Pipeline pipeline) {
+    PipelineProxy(Pipeline pipeline, int taskNum) {
         this.pipeline = pipeline;
-        counts = new ArrayList<>();
+        counts = new int[taskNum];
     }
 
     @Override
     public Response<Long> append(String key, String value) {
-//        add();
-//        return pipeline.append(key, value);
         throw new UnsupportedOperationException("write operation is not allowed here");
     }
 

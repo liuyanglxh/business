@@ -45,6 +45,7 @@ public class PipeTest {
 
         TestFactory factory = new TestFactory();
 
+        //业务代码
         RedisTask<Person> personTask = personService.get(personId);
         RedisTask<Reward> rewardTask = rewardService.getByPerson(personId);
 
