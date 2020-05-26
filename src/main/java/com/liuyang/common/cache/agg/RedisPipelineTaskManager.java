@@ -43,7 +43,7 @@ public class RedisPipelineTaskManager {
         }
         try (Jedis jedis = jedisSupplier.get()) {
             Pipeline pipeline = jedis.pipelined();
-            PipelineProxy pipelineProxy = new PipelineProxy(pipeline);
+            PipelineProxy pipelineProxy = new PipelineProxy(pipeline, this.tasks.size());
 
             objectMap = new HashMap<>();
             Map<RedisTask, Integer> taskCountMap = new HashMap<>();
