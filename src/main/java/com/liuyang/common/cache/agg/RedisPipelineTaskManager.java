@@ -60,7 +60,7 @@ public class RedisPipelineTaskManager {
             int index = 0;
             for (RedisTask<?> task : tasks) {
                 Integer count = taskCountMap.get(task);
-                for (Integer i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++) {
                     objectMap.putIfAbsent(task, new ArrayList<>());
                     Object obj = objects.get(index++);
                     objectMap.get(task).add(obj);
